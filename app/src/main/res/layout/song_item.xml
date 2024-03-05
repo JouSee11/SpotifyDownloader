@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+
+    <TextView
+        android:id="@+id/song_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Song name"
+        android:textSize="20sp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:paddingStart="15dp"
+        android:paddingVertical="5dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        />
+
+<!--    <View-->
+<!--        android:layout_width="250dp"-->
+<!--        android:layout_height="1dp"-->
+<!--        android:layout_below="@id/song_name"-->
+<!--        android:background="@color/light_gray"-->
+<!--        android:layout_alignParentStart="true"-->
+<!--        android:layout_marginStart="10dp"-->
+<!--        />-->
+
+    <TextView
+        android:id="@+id/artist_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/song_name"
+        android:text="Artist name"
+        android:paddingVertical="5dp"
+        android:paddingStart="15dp"
+        android:textSize="15dp"
+        android:textColor="@color/light_gray"/>
+
+    <TextView
+        android:id="@+id/duration_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/song_name"
+        android:layout_toEndOf="@id/artist_name"
+        android:text="2:38"
+        android:paddingVertical="5dp"
+        android:paddingEnd="15dp"
+        android:paddingStart="15dp"
+        android:textSize="15dp"
+        android:textColor="@color/white"/>
+
+    <ImageButton
+        android:id="@+id/button_download_single"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:background="@drawable/download_icon_gray"
+        android:layout_alignParentEnd="true"
+        android:layout_centerInParent="true"
+        android:layout_marginEnd="10dp"
+        />
+
+    <ProgressBar
+        android:id="@+id/loading_wheel"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_centerInParent="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="10dp"
+        android:visibility="visible"
+        android:indeterminateTint="@color/green"
+
+        />
+
+    <ImageView
+        android:id="@+id/finished_image"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:src="@drawable/check_green"
+        android:layout_centerInParent="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="10dp"
+        android:visibility="invisible"
+        />
+
+
+
+
+    <!-- dividor />-->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/artist_name"
+        android:background="@color/green"
+        android:layout_marginHorizontal="0dp"
+        />
+
+
+
+
+</RelativeLayout>
