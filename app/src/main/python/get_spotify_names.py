@@ -9,30 +9,68 @@ import shutil
 
 # using spotipy
 def get_playlist_name(sp, playlist):
-    return sp.playlist(playlist)["name"]
+    try:
+        name = sp.playlist(playlist)["name"]
+    except spotipy.exceptions.SpotifyException:
+        name = sp.album(playlist)["name"]
 
+    return name
+
+
+#def get_names_list(sp, playlist):
+    #    # get the tracks items
+    #try:
+    #   results = sp.playlist_tracks(playlist)
+    #except spotipy.exceptions.SpotifyException:
+    #    results = sp.album_tracks(playlist)
+    #tracks = results["items"]
+    #while results["next"]:
+    #   results = sp.next(results)
+    #   tracks.extend(results["items"])
+
+    # load to dictionary
+    #song_artist_d = dict()
+    #
+    #for track in tracks:
+    #    track_name = track["track"]["name"]
+    #    artist_name = ", ".join([artist["name"] for artist in track["track"]["artists"]])
+    #    # get song duration
+    #    duration_seconds = track["track"]["duration_ms"] / 1000
+    #    seconds_num = int(duration_seconds % 60)
+    #    if len(str(seconds_num)) == 1:
+    #        seconds_num = f"0{seconds_num}"
+    #    duration_formated = f"{int(duration_seconds / 60)}:{seconds_num}"
+    #    #print(f"{track_name} - {artist_name}")
+    #    song_artist_d[track_name] = [artist_name, duration_formated]
+
+    #return song_artist_d
 
 def get_names_list(sp, playlist):
-    # get the tracks items
-    results = sp.playlist_tracks(playlist)
-    tracks = results["items"]
-    while results["next"]:
-        results = sp.next(results)
-        tracks.extend(results["items"])
+    try:
+        results = sp.playlist_tracks(playlist)
+        tracks = results["items"]
+        while results["next"]:
+            results = sp.next(results)
+            tracks.extend(results["items"])
+    except spotipy.exceptions.SpotifyException:
+        # Handling the case for albums
+        album = sp.album(playlist)
+        tracks = album['tracks']['items']
 
     # load to dictionary
     song_artist_d = dict()
 
     for track in tracks:
-        track_name = track["track"]["name"]
-        artist_name = ", ".join([artist["name"] for artist in track["track"]["artists"]])
+        if "track" in track:  # Check if it's a playlist response
+            track = track["track"]
+        track_name = track["name"]
+        artist_name = ", ".join([artist["name"] for artist in track["artists"]])
         # get song duration
-        duration_seconds = track["track"]["duration_ms"] / 1000
+        duration_seconds = track["duration_ms"] / 1000
         seconds_num = int(duration_seconds % 60)
         if len(str(seconds_num)) == 1:
             seconds_num = f"0{seconds_num}"
         duration_formated = f"{int(duration_seconds / 60)}:{seconds_num}"
-        #print(f"{track_name} - {artist_name}")
         song_artist_d[track_name] = [artist_name, duration_formated]
 
     return song_artist_d
@@ -76,6 +114,4 @@ def download(song, artist, directory):
         return ""
 
     return new_file
-
-
 
