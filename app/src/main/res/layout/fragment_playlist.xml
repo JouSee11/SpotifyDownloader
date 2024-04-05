@@ -1,14 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PlaylistFragment">
+    tools:context=".PlaylistFragment"
+    android:background="@color/dark_gray">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/playlistImageView"
+            android:layout_width="match_parent"
+            android:layout_height="130dp"
+            tools:src="@tools:sample/avatars"
+            android:contentDescription="playlist_title_image"
+            android:layout_marginTop="30dp"/>
+
+        <TextView
+            android:id="@+id/playlistName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Playlist name"
+            android:textSize="20dp"
+            android:textColor="@color/white"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"/>
+
+        <Button
+            android:id="@+id/downloadButton"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="Download all"
+            android:backgroundTint="@color/green"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:paddingTop="0dp"
+            android:layout_marginTop="20sp"
+            android:layout_marginHorizontal="38dp"
+            android:enabled="false"
+            />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="400dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="20sp"
+            android:layout_marginBottom="20dp"
+            android:paddingBottom="15dp"
+            android:background="@drawable/edittext_entry">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginVertical="10dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+        </ScrollView>
+
+    </LinearLayout>
 
 </FrameLayout>
