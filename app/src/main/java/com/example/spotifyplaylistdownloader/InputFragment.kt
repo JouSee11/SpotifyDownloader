@@ -5,6 +5,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import androidx.navigation.fragment.findNavController
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -34,7 +37,16 @@ class InputFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_input, container, false)
+        val view = inflater.inflate(R.layout.fragment_input, container, false)
+
+        //widgets
+        val pasteButton = view.findViewById<Button>(R.id.pasteButton)
+
+        pasteButton.setOnClickListener {
+            findNavController().navigate(R.id.action_inputFragment_to_playlistFragment)
+        }
+
+        return view
     }
 
     companion object {
