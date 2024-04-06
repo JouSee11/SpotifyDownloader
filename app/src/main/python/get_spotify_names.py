@@ -28,33 +28,14 @@ def validate_link(sp, playlist):
     except SpotifyException:
         return False
 
-#def get_names_list(sp, playlist):
-#    # get the tracks items
-#try:
-#   results = sp.playlist_tracks(playlist)
-#except spotipy.exceptions.SpotifyException:
-#    results = sp.album_tracks(playlist)
-#tracks = results["items"]
-#while results["next"]:
-#   results = sp.next(results)
-#   tracks.extend(results["items"])
 
-# load to dictionary
-#song_artist_d = dict()
-#
-#for track in tracks:
-#    track_name = track["track"]["name"]
-#    artist_name = ", ".join([artist["name"] for artist in track["track"]["artists"]])
-#    # get song duration
-#    duration_seconds = track["track"]["duration_ms"] / 1000
-#    seconds_num = int(duration_seconds % 60)
-#    if len(str(seconds_num)) == 1:
-#        seconds_num = f"0{seconds_num}"
-#    duration_formated = f"{int(duration_seconds / 60)}:{seconds_num}"
-#    #print(f"{track_name} - {artist_name}")
-#    song_artist_d[track_name] = [artist_name, duration_formated]
-
-#return song_artist_d
+def get_thumbnail(sp, playlist):
+    try:
+        url = sp.playlist(playlist)["images"][0]["url"]
+        return url
+    except SpotifyException:
+        url = sp.album(playlist)["images"][0]["url"]
+        return url
 
 def get_names_list(sp, playlist):
     try:
@@ -101,6 +82,8 @@ def get_names(playlist_link, action):
         return get_names_list(sp, playlist_id)
     elif action == "validate":
         return validate_link(sp, playlist_id)
+    elif action == "thumbnail":
+        return get_thumbnail(sp, playlist_id)
 
 
 # downloading and searching youtube

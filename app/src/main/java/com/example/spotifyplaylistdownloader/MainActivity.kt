@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ModuleInfo
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -50,6 +51,10 @@ lateinit var downloadDirecotry: String
 var playlistName: String? = ""
 var songArtistMap = mutableMapOf<String, String>()
 
+lateinit var py: Python
+lateinit var myModule: PyObject
+lateinit var myFunNames: PyObject
+
 class MainActivity : AppCompatActivity() {
 
     //private val songsAdapter = RecyclerAdapter()
@@ -76,8 +81,11 @@ class MainActivity : AppCompatActivity() {
         appContext = this
         // widgets
 
-        val pyInnit = Python.start(AndroidPlatform(this))
-
+        //initialize python
+        Python.start(AndroidPlatform(this))
+        py = Python.getInstance()
+        myModule= py.getModule("get_spotify_names")
+        myFunNames = myModule["get_names"]!!
     }
 
 

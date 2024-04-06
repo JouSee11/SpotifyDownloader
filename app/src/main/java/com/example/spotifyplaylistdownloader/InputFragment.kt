@@ -15,6 +15,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
@@ -39,6 +40,8 @@ class InputFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    private lateinit var permissionLauncher: ActivityResultLauncher<Array<String>>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -54,19 +57,28 @@ class InputFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_input, container, false)
 
-        lateinit var permissionsLauncher: ActivityResultLauncher<Array<String>>
-        //get permissions
-        updateOrRequestPermissions(permissionsLauncher)
-
         //widgets
         val pasteButton = view.findViewById<Button>(R.id.pasteButton)
         val editText = view.findViewById<EditText>(R.id.editText)
 
+        //initilaize the permission launcher
+        permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            val granted = permissions.entries.all { it.value }
+            if (!granted) {
+                Toast.makeText(context, "Denied permissions - RESTART THE APP - allow permissions", Toast.LENGTH_SHORT).show()
+                pasteButton.isEnabled = false
+                pasteButton.text = "Restart app"
+            }
+        }
+        //get permissions
+        updateOrRequestPermissions()
+
+
         //get reference to python to validate the link
         //val pyInnit = Python.start(AndroidPlatform(requireContext()))
-        val py = Python.getInstance()
-        val myModule: PyObject? = py.getModule("get_spotify_names")
-        val myFunNames: PyObject? = myModule?.get("get_names")
+//        val py = Python.getInstance()
+//        val myModule: PyObject? = py.getModule("get_spotify_names")
+//        val myFunNames: PyObject? = myModule?.get("get_names")
 
         //button press action
         pasteButton.setOnClickListener {
@@ -81,25 +93,26 @@ class InputFragment : Fragment() {
                 return@setOnClickListener
             }
 
-
             val spotifyLink = editText.text.toString()
-
             //check if the input is valid
-            val isValid = myFunNames?.call(spotifyLink, "validate")?.toString()
+            val isValid = myFunNames.call(spotifyLink, "validate")?.toString()
             Log.println(Log.DEBUG, "test", isValid.toString())
             if (isValid == "False") {
                 println("here")
                 Toast.makeText(context, "Enter a valid link", Toast.LENGTH_SHORT).show()
             }
             else {
-            findNavController().navigate(R.id.action_inputFragment_to_playlistFragment)
+                val bundle = Bundle().apply {
+                    putString("link", spotifyLink)
+                }
+            findNavController().navigate(R.id.action_inputFragment_to_playlistFragment, bundle)
             }
         }
 
         return view
     }
 
-    private fun updateOrRequestPermissions(launcher: ActivityResultLauncher<Array<String>>) {
+    private fun updateOrRequestPermissions() {
         val hasReadPermission = ContextCompat.checkSelfPermission(
             requireContext(),
             Manifest.permission.READ_EXTERNAL_STORAGE
@@ -121,11 +134,9 @@ class InputFragment : Fragment() {
             permissionsToRequest.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         }
         if (permissionsToRequest.isNotEmpty()) {
-            //val permissionsLauncher: ActivityResultLauncher<Array<String>>
-            launcher.launch(permissionsToRequest.toTypedArray())
+            permissionLauncher.launch(permissionsToRequest.toTypedArray())
         }
     }
-
 
 
     companion object {

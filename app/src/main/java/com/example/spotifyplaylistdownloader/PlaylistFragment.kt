@@ -1,10 +1,16 @@
 package com.example.spotifyplaylistdownloader
 
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import com.squareup.picasso.Picasso
+import com.squareup.picasso.Target
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -34,7 +40,43 @@ class PlaylistFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_playlist, container, false)
+        val view = inflater.inflate(R.layout.fragment_playlist, container, false)
+
+        //widgets
+        val imageView = view.findViewById<ImageView>(R.id.playlistImageView)
+        val imageViewWide = view.findViewById<ImageView>(R.id.playlistImageViewWide)
+        val playlistTextView = view.findViewById<TextView>(R.id.playlistName)
+
+        val playlistLink = arguments?.getString("link").toString()
+
+        //set the image to playlist thumbnail
+        val imageUrl = myFunNames.call(playlistLink, "thumbnail").toString()
+        //target to set the image to both normal and wide at once
+        val targetImages = object : Target {
+            override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+                // Set the bitmap to both ImageViews
+                imageView.setImageBitmap(bitmap)
+                imageViewWide.setImageBitmap(bitmap)
+            }
+
+            override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
+                // Handle bitmap loading failure
+            }
+
+            override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
+                // Handle bitmap loading preparation
+            }
+        }
+        Picasso.get()
+            .load(imageUrl)
+            .into(targetImages)
+
+
+        //set playlist name
+        val playlistName = myFunNames.call(playlistLink, "pl_name").toString()
+        playlistTextView.text = playlistName
+
+        return view
     }
 
     companion object {
