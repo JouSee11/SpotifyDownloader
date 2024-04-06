@@ -1,12 +1,18 @@
 package com.example.spotifyplaylistdownloader
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
+import android.widget.Toast
 import androidx.navigation.fragment.findNavController
+import com.chaquo.python.PyObject
+import com.chaquo.python.Python
+import com.chaquo.python.android.AndroidPlatform
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -41,9 +47,27 @@ class InputFragment : Fragment() {
 
         //widgets
         val pasteButton = view.findViewById<Button>(R.id.pasteButton)
+        val editText = view.findViewById<EditText>(R.id.editText)
+
+        //get reference to python to validate the link
+        //val pyInnit = Python.start(AndroidPlatform(requireContext()))
+        val py = Python.getInstance()
+        val myModule: PyObject? = py.getModule("get_spotify_names")
+        val myFunNames: PyObject? = myModule?.get("get_names")
 
         pasteButton.setOnClickListener {
+            val spotifyLink = editText.text.toString()
+
+            //check if the input is valid
+            val isValid = myFunNames?.call(spotifyLink, "validate")?.toString()
+            Log.println(Log.DEBUG, "test", isValid.toString())
+            if (isValid == "False") {
+                println("here")
+                Toast.makeText(context, "Enter a valid link", Toast.LENGTH_SHORT).show()
+            }
+            else {
             findNavController().navigate(R.id.action_inputFragment_to_playlistFragment)
+            }
         }
 
         return view

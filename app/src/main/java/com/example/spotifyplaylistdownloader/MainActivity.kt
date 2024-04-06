@@ -71,9 +71,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
 
+
         downloadDirecotry = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).toString()
         appContext = this
         // widgets
+
+        val pyInnit = Python.start(AndroidPlatform(this))
 
     }
 }
