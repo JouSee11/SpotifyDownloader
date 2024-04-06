@@ -79,6 +79,8 @@ class MainActivity : AppCompatActivity() {
         val pyInnit = Python.start(AndroidPlatform(this))
 
     }
+
+
 }
 //        //widgets
 //
@@ -287,3 +289,41 @@ fun saveToExternalStorage(mp3Path: String, title: String, artist:String, album: 
     }
 
 }
+
+
+fun checkInternetConnectivity(context: Context): Boolean {
+    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val network = connectivityManager.activeNetwork
+    val capabilities = connectivityManager.getNetworkCapabilities(network)
+
+    //device is connected
+    return capabilities != null //&& capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+}
+
+//fun updateOrRequestPermissions() {
+//    val hasReadPermission = ContextCompat.checkSelfPermission(
+//        this,
+//        Manifest.permission.READ_EXTERNAL_STORAGE
+//    ) == PackageManager.PERMISSION_GRANTED
+//    val hasWritePermission = ContextCompat.checkSelfPermission(
+//        this,
+//        Manifest.permission.WRITE_EXTERNAL_STORAGE
+//    ) == PackageManager.PERMISSION_GRANTED
+//    val minSdk29 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+//
+//    readPermissionGranted = hasReadPermission
+//    writePermissionGranted = hasWritePermission || minSdk29
+//
+//    val permissionsToRequest = mutableListOf<String>()
+//    if (!readPermissionGranted) {
+//        permissionsToRequest.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+//    }
+//    if (!writePermissionGranted) {
+//        permissionsToRequest.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+//    }
+//    if (permissionsToRequest.isNotEmpty()) {
+//        permissionsLauncher.launch(permissionsToRequest.toTypedArray())
+//    }
+//
+//
+//}

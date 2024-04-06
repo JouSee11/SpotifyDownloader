@@ -1,5 +1,10 @@
 package com.example.spotifyplaylistdownloader
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.net.ConnectivityManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -9,6 +14,10 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.navigation.fragment.findNavController
 import com.chaquo.python.PyObject
 import com.chaquo.python.Python
@@ -45,6 +54,10 @@ class InputFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_input, container, false)
 
+        lateinit var permissionsLauncher: ActivityResultLauncher<Array<String>>
+        //get permissions
+        updateOrRequestPermissions(permissionsLauncher)
+
         //widgets
         val pasteButton = view.findViewById<Button>(R.id.pasteButton)
         val editText = view.findViewById<EditText>(R.id.editText)
@@ -55,7 +68,20 @@ class InputFragment : Fragment() {
         val myModule: PyObject? = py.getModule("get_spotify_names")
         val myFunNames: PyObject? = myModule?.get("get_names")
 
+        //button press action
         pasteButton.setOnClickListener {
+            //check if the user is connected
+            val connected = checkInternetConnectivity(requireContext())
+            if (!connected) {
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Not connected")
+                    .setMessage("Please connect to the internet to proceed")
+                    .setPositiveButton("Ok") {_, _ -> }
+                    .show()
+                return@setOnClickListener
+            }
+
+
             val spotifyLink = editText.text.toString()
 
             //check if the input is valid
@@ -72,6 +98,35 @@ class InputFragment : Fragment() {
 
         return view
     }
+
+    private fun updateOrRequestPermissions(launcher: ActivityResultLauncher<Array<String>>) {
+        val hasReadPermission = ContextCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+        val hasWritePermission = ContextCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+        val minSdk29 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+
+        val readPermissionGranted = hasReadPermission
+        val writePermissionGranted = hasWritePermission || minSdk29
+
+        val permissionsToRequest = mutableListOf<String>()
+        if (!readPermissionGranted) {
+            permissionsToRequest.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+        }
+        if (!writePermissionGranted) {
+            permissionsToRequest.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        }
+        if (permissionsToRequest.isNotEmpty()) {
+            //val permissionsLauncher: ActivityResultLauncher<Array<String>>
+            launcher.launch(permissionsToRequest.toTypedArray())
+        }
+    }
+
+
 
     companion object {
         /**
