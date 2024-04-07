@@ -262,14 +262,14 @@ class MainActivity : AppCompatActivity() {
 //    }
 //}
 //
-suspend fun singleDownload(artist: String, song: String) {
+suspend fun singleDownload(artist: String, song: String, album: String) {
 //
 
     val myFunDownload: PyObject? = myModule?.get("download")
 
     val resultDownload = withContext(Dispatchers.IO) { myFunDownload?.call(song, artist, downloadDirecotry)}
     Log.println(Log.INFO, "download", "downloaded")
-    saveToExternalStorage(resultDownload.toString(), song, artist, playlistName.toString(), MainActivity.appContext)
+    saveToExternalStorage(resultDownload.toString(), song, artist, album, MainActivity.appContext)
     Log.println(Log.INFO, "download", "added to media stor")
 
 }

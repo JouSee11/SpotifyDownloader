@@ -80,7 +80,7 @@ class RecyclerAdapter(private var songs: ArrayList<Song>) : RecyclerView.Adapter
             holder.stateLoading()
             //start the downloading
             CoroutineScope(Dispatchers.IO).launch {
-                val resultDownload = singleDownload(song.artistName, song.songName)
+                val resultDownload = singleDownload(song.artistName, song.songName, playlistName.toString())
                 song.state = 2
                 songArtistMap.remove(song.songName)
                 println(songArtistMap)
