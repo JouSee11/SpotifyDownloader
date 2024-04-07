@@ -9,8 +9,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -27,6 +34,10 @@ class PlaylistFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    private val myScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+
+    private lateinit var songsAdapter: RecyclerAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -42,39 +53,78 @@ class PlaylistFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_playlist, container, false)
 
+        //get link from the previous fragment
+        val playlistLink = arguments?.getString("link").toString()
+
         //widgets
         val imageView = view.findViewById<ImageView>(R.id.playlistImageView)
         val imageViewWide = view.findViewById<ImageView>(R.id.playlistImageViewWide)
         val playlistTextView = view.findViewById<TextView>(R.id.playlistName)
 
-        val playlistLink = arguments?.getString("link").toString()
+        //recycler view
+        fun createSongList(playlistLink: String): ArrayList<Song>{
+            //get playlist songs and add to recycler view
+            val artistSong = myFunNames?.call(playlistLink, "songs")?.asMap()!!.map { (key, value) -> key.toString() to value.asList() }.toMap()
+            val list = ArrayList<Song>()
 
-        //set the image to playlist thumbnail
-        val imageUrl = myFunNames.call(playlistLink, "thumbnail").toString()
-        //target to set the image to both normal and wide at once
-        val targetImages = object : Target {
-            override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
-                // Set the bitmap to both ImageViews
-                imageView.setImageBitmap(bitmap)
-                imageViewWide.setImageBitmap(bitmap)
-            }
+            songArtistMap = artistSong?.map { (key, value) -> key to value.toString().substringBefore(",").substringAfter("[")}!!.toMap().toMutableMap()
+            println(songArtistMap)
 
-            override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
-                // Handle bitmap loading failure
+            //add the output to song type and to list
+            for ((key, value) in artistSong!!){
+                val valueList = value.toList()
+                var artist = valueList[0].toString()
+                artist = if (artist.length > 40) "${artist.substring(0, 40)}..." else artist
+                list.add(Song(songName = key.toString(), artistName =  artist, duration =  valueList[1].toString(), state = 0 ))
+                //songArtistMap += key.toString() to valueList[0].toString()
             }
+            return list
 
-            override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
-                // Handle bitmap loading preparation
-            }
         }
-        Picasso.get()
-            .load(imageUrl)
-            .into(targetImages)
+
+        val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(context)
+
+        //get playlist songs and add to recycler view
+        val songData = createSongList(playlistLink)
+        songsAdapter = RecyclerAdapter(songData)
+        recyclerView.adapter = songsAdapter
 
 
         //set playlist name
-        val playlistName = myFunNames.call(playlistLink, "pl_name").toString()
-        playlistTextView.text = playlistName
+        val playlistNameString = myFunNames.call(playlistLink, "pl_name").toString()
+        playlistTextView.text = playlistNameString
+
+        // handle images loads
+        myScope.launch {
+            //set the image to playlist thumbnail
+            val imageUrl = myFunNames.call(playlistLink, "thumbnail").toString()
+            //target to set the image to both normal and wide at once
+            val targetImages = object : Target {
+                override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+                    // Set the bitmap to both ImageViews
+                    imageView.setImageBitmap(bitmap)
+                    imageViewWide.setImageBitmap(bitmap)
+
+                    imageView.animate().alpha(1f).setDuration(500).start()
+                    imageViewWide.animate().alpha(0.5f).setDuration(2000).start()
+                }
+
+                override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
+                    // Handle bitmap loading failure
+                }
+
+                override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
+                    // Handle bitmap loading preparation
+                }
+            }
+            Picasso.get()
+                .load(imageUrl)
+                .into(targetImages)
+        }
+
+
+
 
         return view
     }

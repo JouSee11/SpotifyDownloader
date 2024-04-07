@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Vibrator
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -94,12 +95,20 @@ class InputFragment : Fragment() {
             }
 
             val spotifyLink = editText.text.toString()
+
             //check if the input is valid
             val isValid = myFunNames.call(spotifyLink, "validate")?.toString()
             Log.println(Log.DEBUG, "test", isValid.toString())
+
             if (isValid == "False") {
-                println("here")
+
+                //show toast if it is wrong
                 Toast.makeText(context, "Enter a valid link", Toast.LENGTH_SHORT).show()
+
+                //vibrate if it is wrong
+                val vibrator = requireContext().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                val pattern = longArrayOf(400, 200 , 400)
+                if (vibrator.hasVibrator()) {vibrator.vibrate(200)}
             }
             else {
                 val bundle = Bundle().apply {

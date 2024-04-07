@@ -12,6 +12,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -82,7 +83,8 @@ class MainActivity : AppCompatActivity() {
         // widgets
 
         //initialize python
-        Python.start(AndroidPlatform(this))
+        if (! Python.isStarted()) { Python.start(AndroidPlatform(this)); }
+
         py = Python.getInstance()
         myModule= py.getModule("get_spotify_names")
         myFunNames = myModule["get_names"]!!
@@ -261,12 +263,14 @@ class MainActivity : AppCompatActivity() {
 //}
 //
 suspend fun singleDownload(artist: String, song: String) {
-    val py = Python.getInstance()
-    val myModule: PyObject? = py.getModule("get_spotify_names")
+//
+
     val myFunDownload: PyObject? = myModule?.get("download")
 
     val resultDownload = withContext(Dispatchers.IO) { myFunDownload?.call(song, artist, downloadDirecotry)}
+    Log.println(Log.INFO, "download", "downloaded")
     saveToExternalStorage(resultDownload.toString(), song, artist, playlistName.toString(), MainActivity.appContext)
+    Log.println(Log.INFO, "download", "added to media stor")
 
 }
 
