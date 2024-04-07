@@ -5,7 +5,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/black"
     >
 
     <TextView
@@ -60,7 +59,7 @@
         android:id="@+id/button_download_single"
         android:layout_width="35dp"
         android:layout_height="35dp"
-        android:background="@drawable/download_icon"
+        android:background="@drawable/download_icon_spotify"
         android:layout_alignParentEnd="true"
         android:layout_centerInParent="true"
         android:layout_marginEnd="10dp"

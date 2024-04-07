@@ -7,17 +7,25 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.chaquo.python.PyObject
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -60,6 +68,7 @@ class PlaylistFragment : Fragment() {
         val imageView = view.findViewById<ImageView>(R.id.playlistImageView)
         val imageViewWide = view.findViewById<ImageView>(R.id.playlistImageViewWide)
         val playlistTextView = view.findViewById<TextView>(R.id.playlistName)
+        val downloadButton = view.findViewById<Button>(R.id.downloadButton)
 
         //recycler view
         fun createSongList(playlistLink: String): ArrayList<Song>{
@@ -122,6 +131,67 @@ class PlaylistFragment : Fragment() {
                 .load(imageUrl)
                 .into(targetImages)
         }
+
+        //download all button
+        val myFunDownload: PyObject? = myModule?.get("download")
+        //variables for the download
+        var isDownloading = false
+        var downloadJob: Job? = null // Store reference to the download job
+        val downloaded = mutableListOf<String>()
+
+        downloadButton.setOnClickListener {
+            if (!isDownloading) {
+                //update the ui button
+                isDownloading = true
+                downloadButton.text = "Cancel download"
+                downloadButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.red))
+
+                //start the download
+                downloadJob = myScope.launch {
+                    songsAdapter.allStartDownload()
+                    for ((song, artist) in songArtistMap!!) {
+                        val resultDownload = withContext(Dispatchers.IO) { myFunDownload?.call(song, artist, downloadDirecotry) }
+                        downloaded.add(song)
+                        // make the song appear in the music player
+                        if (resultDownload.toString() != "") {
+                            saveToExternalStorage(resultDownload.toString(), song.toString(), artist, playlistName.toString(), requireContext())
+
+                            Toast.makeText(requireContext(),"Downloaded: $song", Toast.LENGTH_SHORT).show()
+                        }
+                        songsAdapter.allOneFinished(song)
+
+
+                        //check if it should be canceled
+                        if (!isActive) {
+                            break
+                        }
+                    }
+                    isDownloading = false
+                    downloadButton.text = "Download"
+                    downloadButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.green))
+                    //delete from the list that are already downloaded
+                    downloaded.forEach { songArtistMap.remove(it) }
+                    downloaded.clear()
+                }
+            } else {
+                //cancel download
+                downloadJob?.cancel()
+                isDownloading = false
+                downloadButton.text = "Download"
+                downloadButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.green))
+                songsAdapter.cancelAllDownload()
+
+                //delete from the list that are already downloaded
+                downloaded.forEach { songArtistMap.remove(it) }
+                downloaded.clear()
+            }
+        }
+
+
+    fun onDestroy() {
+        super.onDestroy()
+        myScope.cancel()
+    }
 
 
 
