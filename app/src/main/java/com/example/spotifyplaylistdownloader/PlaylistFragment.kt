@@ -83,7 +83,7 @@ class PlaylistFragment : Fragment() {
             for ((key, value) in artistSong!!){
                 val valueList = value.toList()
                 var artist = valueList[0].toString()
-                artist = if (artist.length > 40) "${artist.substring(0, 40)}..." else artist
+                artist = if (artist.length > 35) "${artist.substring(0, 35)}..." else artist
                 list.add(Song(songName = key.toString(), artistName =  artist, duration =  valueList[1].toString(), state = 0 ))
                 //songArtistMap += key.toString() to valueList[0].toString()
             }
