@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/inputFragment">
+    app:startDestination="@id/animationFragment">
 
     <fragment
         android:id="@+id/inputFragment"
@@ -19,4 +19,22 @@
         android:name="com.example.spotifyplaylistdownloader.PlaylistFragment"
         android:label="fragment_playlist"
         tools:layout="@layout/fragment_playlist" />
+    <fragment
+        android:id="@+id/menuFragment"
+        android:name="com.example.spotifyplaylistdownloader.MenuFragment"
+        android:label="fragment_menu"
+        tools:layout="@layout/fragment_menu" >
+        <action
+            android:id="@+id/action_menuFragment_to_inputFragment"
+            app:destination="@id/inputFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/animationFragment"
+        android:name="com.example.spotifyplaylistdownloader.AnimationFragment"
+        android:label="fragment_animation"
+        tools:layout="@layout/fragment_animation" >
+        <action
+            android:id="@+id/action_animationFragment_to_menuFragment"
+            app:destination="@id/menuFragment" />
+    </fragment>
 </navigation>

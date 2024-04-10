@@ -1,108 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PlaylistFragment"
-    android:background="@drawable/background_gradient">
+    tools:context=".PlaylistFragment">
 
-<!--    <ScrollView-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="400dp"-->
-<!--        android:layout_marginStart="20dp"-->
-<!--        android:layout_marginEnd="20dp"-->
-<!--        android:layout_marginTop="20sp"-->
-<!--        android:layout_marginBottom="20dp"-->
-<!--        android:paddingBottom="15dp"-->
-<!--        android:background="@drawable/edittext_entry">-->
-
-    <LinearLayout
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbarPlaylist"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="?actionBarSize"
+        android:background="@color/black"
+        app:title="Spotify downloader"
+        app:titleTextColor="@color/green"
+        />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+
+    <!-- whole scrollable page !-->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background_gradient"
+        android:layout_below="@id/toolbarPlaylist"
+        >
+    <!--    <ScrollView-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="400dp"-->
+    <!--        android:layout_marginStart="20dp"-->
+    <!--        android:layout_marginEnd="20dp"-->
+    <!--        android:layout_marginTop="20sp"-->
+    <!--        android:layout_marginBottom="20dp"-->
+    <!--        android:paddingBottom="15dp"-->
+    <!--        android:background="@drawable/edittext_entry">-->
+
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:layout_marginHorizontal="15dp">
+            android:orientation="vertical">
 
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/playlistImageViewWide"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
-                tools:src="@tools:sample/avatars"
-                android:contentDescription="playlist_title_image_wide"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:layout_marginHorizontal="15dp">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/playlistImageViewWide"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    tools:src="@tools:sample/avatars"
+                    android:contentDescription="playlist_title_image_wide"
+                    android:layout_gravity="center"
+                    app:shapeAppearanceOverlay="@style/roundedImageViewWide"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:scaleType="centerCrop"
+                    android:alpha="0.0"/>
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/playlistImageView"
+                    android:layout_width="130dp"
+                    android:layout_height="130dp"
+                    tools:src="@tools:sample/avatars"
+                    android:contentDescription="playlist_title_image"
+                    android:layout_gravity="center"
+                    app:shapeAppearanceOverlay="@style/roundedImageView"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:alpha="0.0"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+            <TextView
+                android:id="@+id/playlistName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Playlist name"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
                 android:layout_gravity="center"
-                app:shapeAppearanceOverlay="@style/roundedImageViewWide"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:scaleType="centerCrop"
-                android:alpha="0.0"/>
+                android:layout_marginTop="20dp"
+                android:layout_marginHorizontal="20dp"
+                android:textAlignment="center"/>
 
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/playlistImageView"
-                android:layout_width="130dp"
-                android:layout_height="130dp"
-                tools:src="@tools:sample/avatars"
-                android:contentDescription="playlist_title_image"
-                android:layout_gravity="center"
-                app:shapeAppearanceOverlay="@style/roundedImageView"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:alpha="0.0"/>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            <Button
+                android:id="@+id/downloadButton"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="Download all"
+                android:backgroundTint="@color/green"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:paddingTop="0dp"
+                android:layout_marginHorizontal="38dp"
+                android:enabled="true"
+                android:layout_marginTop="20dp"
+                />
 
 
 
-        <TextView
-            android:id="@+id/playlistName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Playlist name"
-            android:textSize="20dp"
-            android:textStyle="bold"
-            android:textColor="@color/white"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:layout_marginHorizontal="20dp"
-            android:textAlignment="center"/>
-
-        <Button
-            android:id="@+id/downloadButton"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:text="Download all"
-            android:backgroundTint="@color/green"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            android:paddingTop="0dp"
-            android:layout_marginHorizontal="38dp"
-            android:enabled="true"
-            android:layout_marginTop="20dp"
-            />
-
-
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp"
-            android:layout_marginVertical="10dp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            android:nestedScrollingEnabled="false"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginVertical="10dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:nestedScrollingEnabled="false"
+                android:layout_marginBottom="20dp"/>
 
 
 
 
 
-    </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
-</androidx.core.widget.NestedScrollView>
+
+
+</RelativeLayout>

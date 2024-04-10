@@ -88,6 +88,7 @@ class MainActivity : AppCompatActivity() {
         py = Python.getInstance()
         myModule= py.getModule("get_spotify_names")
         myFunNames = myModule["get_names"]!!
+
     }
 
 

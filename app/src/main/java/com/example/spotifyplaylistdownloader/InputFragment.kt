@@ -24,6 +24,7 @@ import androidx.navigation.fragment.findNavController
 import com.chaquo.python.PyObject
 import com.chaquo.python.Python
 import com.chaquo.python.android.AndroidPlatform
+import androidx.appcompat.widget.Toolbar
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -61,6 +62,7 @@ class InputFragment : Fragment() {
         //widgets
         val pasteButton = view.findViewById<Button>(R.id.pasteButton)
         val editText = view.findViewById<EditText>(R.id.editText)
+        val toolbar = view.findViewById<Toolbar>(R.id.toolbarInput)
 
         //initilaize the permission launcher
         permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->

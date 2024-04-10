@@ -5,12 +5,14 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,6 +28,9 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import androidx.appcompat.widget.Toolbar
+import androidx.navigation.fragment.findNavController
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -63,12 +68,24 @@ class PlaylistFragment : Fragment() {
 
         //get link from the previous fragment
         val playlistLink = arguments?.getString("link").toString()
+        val playlistNameString = myFunNames.call(playlistLink, "pl_name").toString()
 
         //widgets
         val imageView = view.findViewById<ImageView>(R.id.playlistImageView)
         val imageViewWide = view.findViewById<ImageView>(R.id.playlistImageViewWide)
         val playlistTextView = view.findViewById<TextView>(R.id.playlistName)
         val downloadButton = view.findViewById<Button>(R.id.downloadButton)
+        val toolbar = view.findViewById<Toolbar>(R.id.toolbarPlaylist)
+
+        //toolbar
+        (activity as AppCompatActivity).apply {
+            setSupportActionBar(view.findViewById(R.id.toolbarPlaylist))
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        }
+        toolbar.title = playlistNameString
+        toolbar.setNavigationOnClickListener {
+            findNavController().navigateUp()
+        }
 
         //recycler view
         fun createSongList(playlistLink: String): ArrayList<Song>{
@@ -101,7 +118,6 @@ class PlaylistFragment : Fragment() {
 
 
         //set playlist name
-        val playlistNameString = myFunNames.call(playlistLink, "pl_name").toString()
         playlistTextView.text = playlistNameString
 
         // handle images loads
@@ -154,7 +170,7 @@ class PlaylistFragment : Fragment() {
                         downloaded.add(song)
                         // make the song appear in the music player
                         if (resultDownload.toString() != "") {
-                            saveToExternalStorage(resultDownload.toString(), song.toString(), artist, playlistName.toString(), requireContext())
+                            saveToExternalStorage(resultDownload.toString(), song.toString(), artist, playlistNameString, requireContext())
 
                             Toast.makeText(requireContext(),"Downloaded: $song", Toast.LENGTH_SHORT).show()
                         }
@@ -167,8 +183,9 @@ class PlaylistFragment : Fragment() {
                         }
                     }
                     isDownloading = false
-                    downloadButton.text = "Download"
-                    downloadButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.green))
+                    downloadButton.text = "Downloaded"
+                    downloadButton.isEnabled = false
+                    downloadButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.light_gray))
                     //delete from the list that are already downloaded
                     downloaded.forEach { songArtistMap.remove(it) }
                     downloaded.clear()
@@ -197,6 +214,19 @@ class PlaylistFragment : Fragment() {
 
 
         return view
+    }
+
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                // Add your action here
+                // For example, you can navigate back
+                findNavController().navigateUp()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     companion object {
