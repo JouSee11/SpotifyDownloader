@@ -82,4 +82,10 @@ dependencies {
 
     implementation("com.github.siyamed:android-shape-imageview:0.9.3@aar")
 
+    // Coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
+
+    // WorkManager
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
+
 }

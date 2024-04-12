@@ -3,6 +3,7 @@ package com.example.spotifyplaylistdownloader
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.provider.ContactsContract
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -30,6 +31,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.fragment.findNavController
+import androidx.work.Data
+import java.io.Serializable
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -156,6 +159,7 @@ class PlaylistFragment : Fragment() {
         val downloaded = mutableListOf<String>()
 
         downloadButton.setOnClickListener {
+
             if (!isDownloading) {
                 //update the ui button
                 isDownloading = true

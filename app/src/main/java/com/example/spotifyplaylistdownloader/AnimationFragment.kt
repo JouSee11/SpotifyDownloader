@@ -53,10 +53,9 @@ class AnimationFragment : Fragment() {
 
         videoView.start()
 
-        videoView.setOnTouchListener(OnTouchListener { v, event ->
-            videoView.
-            true
-        })
+        videoView.setOnClickListener {
+            findNavController().navigate(R.id.action_animationFragment_to_menuFragment)
+        }
 
         videoView.setOnCompletionListener { mp ->
             findNavController().navigate(R.id.action_animationFragment_to_menuFragment)
