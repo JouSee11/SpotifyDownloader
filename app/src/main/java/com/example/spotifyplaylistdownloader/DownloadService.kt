@@ -1,6 +1,8 @@
 package com.example.spotifyplaylistdownloader
 
 import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -34,6 +36,24 @@ class DownloadService: Service() {
 
     private val downloaded = mutableListOf<String>()
 
+    private lateinit var notificationManager: NotificationManager
+    private lateinit var notificationBuilder: NotificationCompat.Builder
+    private val notificationId = 1
+
+    override fun onCreate() {
+        super.onCreate()
+
+        val channel = NotificationChannel(
+            "downloading_channel",
+            "Downloading Notifications",
+            NotificationManager.IMPORTANCE_HIGH
+        )
+
+        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
+    }
+
+    //callbacks to the fragment
     override fun onBind(intent: Intent?): IBinder? {
         return DownloadBinder()
     }
@@ -43,9 +63,11 @@ class DownloadService: Service() {
             return this@DownloadService
         }
     }
+
     fun setServiceCallback(callback: ServiceCallback) {
         serviceCallback = callback
     }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
         val playlistNameString = intent?.getStringExtra("playlistName")
@@ -60,18 +82,21 @@ class DownloadService: Service() {
     }
 
     private fun start(playlistNameString: String) {
-        val notification = NotificationCompat.Builder(this, "downloading_channel")
+        notificationBuilder = NotificationCompat.Builder(this, "downloading_channel")
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle("Downloading")
-            .setContentText("Downloading songs...")
-            .build()
+            .setContentText("0%")
+            .setProgress(100, 0, false)
 
-        startForeground(1, notification)
+        startForeground(notificationId, notificationBuilder.build())
 
 
         //download process
         val myFunDownload: PyObject? = myModule?.get("download")
 
+
+        var downloadCount = 1
+        val playlistSize = songArtistMap.size
         //start the download
         downloadJob = myScope.launch {
             for ((song, artist) in songArtistMap!!) {
@@ -86,6 +111,11 @@ class DownloadService: Service() {
 
                 serviceCallback?.onSongDownloaded(song)
 
+                //update notification
+                notificationBuilder.setProgress(100, ((downloadCount * 100) / playlistSize), false)
+                notificationBuilder.setContentText("$downloadCount/$playlistSize")
+                notificationManager.notify(notificationId, notificationBuilder.build())
+                downloadCount++
 
 
                 //check if it should be canceled
@@ -103,8 +133,15 @@ class DownloadService: Service() {
 
             serviceCallback?.finishedDownload()
 
+            notificationBuilder.setContentText("Downloaded")
+            notificationBuilder.setProgress(0, 0, false)
+            notificationBuilder.setOngoing(false)
+            notificationManager.notify(notificationId, notificationBuilder.build())
 
         }
+
+
+        stopSelf()
     }
 
 
@@ -115,8 +152,11 @@ class DownloadService: Service() {
         //delete from the list that are already downloaded
         downloaded.forEach { songArtistMap.remove(it) }
         downloaded.clear()
+
+        notificationManager.cancel(notificationId)
         stopSelf()
     }
+
     enum class Actions {
         START, STOP
     }

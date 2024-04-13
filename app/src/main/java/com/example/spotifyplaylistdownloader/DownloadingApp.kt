@@ -8,6 +8,8 @@ import android.os.Build
 
 class DownloadingApp: Application() {
 
+    lateinit var notificationManager: NotificationManager
+
     override fun onCreate() {
         super.onCreate()
 
@@ -17,7 +19,7 @@ class DownloadingApp: Application() {
             NotificationManager.IMPORTANCE_HIGH
             )
 
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
     }
 }
