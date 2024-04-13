@@ -1,8 +1,13 @@
 package com.example.spotifyplaylistdownloader
 
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.os.IBinder
 import android.provider.ContactsContract
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -33,6 +38,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.navigation.fragment.findNavController
 import androidx.work.Data
 import java.io.Serializable
+import kotlin.reflect.typeOf
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -45,14 +51,16 @@ private const val ARG_PARAM2 = "param2"
  * Use the [PlaylistFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class PlaylistFragment : Fragment() {
+class PlaylistFragment : Fragment(), ServiceCallback {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
 
     private val myScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+    private var downloadingBoolean = false
 
-    private lateinit var songsAdapter: RecyclerAdapter
+    lateinit var songsAdapter: RecyclerAdapter
+    lateinit var downloadButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +68,41 @@ class PlaylistFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+
+    }
+
+    override fun onSongDownloaded(song: String) {
+        songsAdapter.allOneFinished(song)
+        println("here function")
+    }
+
+    override fun finishedDownload() {
+        downloadButton.text = "Downloaded"
+        downloadButton.isEnabled = false
+        downloadButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.light_gray))
+
+        downloadingBoolean = false
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Start the service
+        val serviceIntent = Intent(requireContext(), DownloadService::class.java)
+        requireContext().startService(serviceIntent)
+
+        // Bind to the service to set the callback
+        val serviceConnection = object : ServiceConnection {
+            override fun onServiceConnected(className: ComponentName?, binder: IBinder?) {
+                val serviceBinder = binder as DownloadService.DownloadBinder
+                val service = serviceBinder.getService()
+                service.setServiceCallback(this@PlaylistFragment)
+            }
+
+            override fun onServiceDisconnected(className: ComponentName?) {
+            }
+        }
+        requireContext().bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
     }
 
     override fun onCreateView(
@@ -77,7 +120,7 @@ class PlaylistFragment : Fragment() {
         val imageView = view.findViewById<ImageView>(R.id.playlistImageView)
         val imageViewWide = view.findViewById<ImageView>(R.id.playlistImageViewWide)
         val playlistTextView = view.findViewById<TextView>(R.id.playlistName)
-        val downloadButton = view.findViewById<Button>(R.id.downloadButton)
+        downloadButton = view.findViewById<Button>(R.id.downloadButton)
         val toolbar = view.findViewById<Toolbar>(R.id.toolbarPlaylist)
 
         //toolbar
@@ -108,7 +151,6 @@ class PlaylistFragment : Fragment() {
                 //songArtistMap += key.toString() to valueList[0].toString()
             }
             return list
-
         }
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
@@ -151,6 +193,8 @@ class PlaylistFragment : Fragment() {
                 .into(targetImages)
         }
 
+
+
         //download all button
         val myFunDownload: PyObject? = myModule?.get("download")
         //variables for the download
@@ -158,53 +202,83 @@ class PlaylistFragment : Fragment() {
         var downloadJob: Job? = null // Store reference to the download job
         val downloaded = mutableListOf<String>()
 
-        downloadButton.setOnClickListener {
+//        downloadButton.setOnClickListener {
+//
+//            if (!isDownloading) {
+//                //update the ui button
+//                isDownloading = true
+//                downloadButton.text = "Cancel download"
+//                downloadButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.red))
+//
+//                //start the download
+//                downloadJob = myScope.launch {
+//                    songsAdapter.allStartDownload()
+//                    for ((song, artist) in songArtistMap!!) {
+//                        val resultDownload = withContext(Dispatchers.IO) { myFunDownload?.call(song, artist, downloadDirecotry) }
+//                        downloaded.add(song)
+//                        // make the song appear in the music player
+//                        if (resultDownload.toString() != "") {
+//                            saveToExternalStorage(resultDownload.toString(), song.toString(), artist, playlistNameString, requireContext())
+//
+//                            Toast.makeText(requireContext(),"Downloaded: $song", Toast.LENGTH_SHORT).show()
+//                        }
+//                        songsAdapter.allOneFinished(song)
+//                        println(song::class.simpleName)
+//
+//
+//                        //check if it should be canceled
+//                        if (!isActive) {
+//                            break
+//                        }
+//                    }
+//                    isDownloading = false
+//                    downloadButton.text = "Downloaded"
+//                    downloadButton.isEnabled = false
+//                    downloadButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.light_gray))
+//                    //delete from the list that are already downloaded
+//                    downloaded.forEach { songArtistMap.remove(it) }
+//                    downloaded.clear()
+//                }
+//            } else {
+//                //cancel download
+//                downloadJob?.cancel()
+//                isDownloading = false
+//                downloadButton.text = "Download"
+//                downloadButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.green))
+//                songsAdapter.cancelAllDownload()
+//
+//                //delete from the list that are already downloaded
+//                downloaded.forEach { songArtistMap.remove(it) }
+//                downloaded.clear()
+//            }
+//        }
 
-            if (!isDownloading) {
-                //update the ui button
-                isDownloading = true
+        downloadButton.setOnClickListener {
+            if (!downloadingBoolean) {
+                val intent = Intent(requireContext(), DownloadService::class.java).apply {
+                    action = DownloadService.Actions.START.toString()
+                }
+                intent.putExtra("playlistName", playlistNameString)
+                ContextCompat.startForegroundService(requireContext(), intent)
+                downloadingBoolean = true
+
+
+                //update ui
                 downloadButton.text = "Cancel download"
                 downloadButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.red))
+                songsAdapter.allStartDownload()
 
-                //start the download
-                downloadJob = myScope.launch {
-                    songsAdapter.allStartDownload()
-                    for ((song, artist) in songArtistMap!!) {
-                        val resultDownload = withContext(Dispatchers.IO) { myFunDownload?.call(song, artist, downloadDirecotry) }
-                        downloaded.add(song)
-                        // make the song appear in the music player
-                        if (resultDownload.toString() != "") {
-                            saveToExternalStorage(resultDownload.toString(), song.toString(), artist, playlistNameString, requireContext())
-
-                            Toast.makeText(requireContext(),"Downloaded: $song", Toast.LENGTH_SHORT).show()
-                        }
-                        songsAdapter.allOneFinished(song)
-
-
-                        //check if it should be canceled
-                        if (!isActive) {
-                            break
-                        }
-                    }
-                    isDownloading = false
-                    downloadButton.text = "Downloaded"
-                    downloadButton.isEnabled = false
-                    downloadButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.light_gray))
-                    //delete from the list that are already downloaded
-                    downloaded.forEach { songArtistMap.remove(it) }
-                    downloaded.clear()
-                }
             } else {
-                //cancel download
-                downloadJob?.cancel()
-                isDownloading = false
+                val intent = Intent(requireContext(), DownloadService::class.java).apply {
+                    action = DownloadService.Actions.STOP.toString()
+                }
+                ContextCompat.startForegroundService(requireContext(), intent)
+                downloadingBoolean = false
+
+                //update ui button
                 downloadButton.text = "Download"
                 downloadButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.green))
                 songsAdapter.cancelAllDownload()
-
-                //delete from the list that are already downloaded
-                downloaded.forEach { songArtistMap.remove(it) }
-                downloaded.clear()
             }
         }
 
@@ -213,9 +287,6 @@ class PlaylistFragment : Fragment() {
         super.onDestroy()
         myScope.cancel()
     }
-
-
-
 
         return view
     }

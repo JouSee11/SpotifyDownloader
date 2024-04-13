@@ -64,6 +64,7 @@ class InputFragment : Fragment() {
         val editText = view.findViewById<EditText>(R.id.editText)
         val toolbar = view.findViewById<Toolbar>(R.id.toolbarInput)
 
+
         //initilaize the permission launcher
         permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
             val granted = permissions.entries.all { it.value }
@@ -73,8 +74,10 @@ class InputFragment : Fragment() {
                 pasteButton.text = "Restart app"
             }
         }
+
         //get permissions
         updateOrRequestPermissions()
+
 
 
         //get reference to python to validate the link
@@ -124,6 +127,8 @@ class InputFragment : Fragment() {
     }
 
     private fun updateOrRequestPermissions() {
+        val permissionsToRequest = mutableListOf<String>()
+
         val hasReadPermission = ContextCompat.checkSelfPermission(
             requireContext(),
             Manifest.permission.READ_EXTERNAL_STORAGE
@@ -132,12 +137,17 @@ class InputFragment : Fragment() {
             requireContext(),
             Manifest.permission.WRITE_EXTERNAL_STORAGE
         ) == PackageManager.PERMISSION_GRANTED
-        val minSdk29 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+
+        //check if notification is granted (only sdk 33 and above
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(requireContext(),
+                Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS)
+        }
 
         val readPermissionGranted = hasReadPermission
-        val writePermissionGranted = hasWritePermission || minSdk29
+        val writePermissionGranted = hasWritePermission
 
-        val permissionsToRequest = mutableListOf<String>()
         if (!readPermissionGranted) {
             permissionsToRequest.add(Manifest.permission.READ_EXTERNAL_STORAGE)
         }
