@@ -116,6 +116,13 @@ class PlaylistFragment : Fragment(), ServiceCallback {
         val playlistLink = arguments?.getString("link").toString()
         val playlistNameString = myFunNames.call(playlistLink, "pl_name").toString()
 
+        //add playlist to history shared preferences
+        val sharedPreferences = MySharedPreferences(requireContext())
+        val newPlaylist = PlaylistHistory(playlistNameString, playlistLink)
+        sharedPreferences.savePlaylistToHistory("playlistHistory", newPlaylist)
+        println(sharedPreferences.getPlaylistHistory("playlistHistory"))
+        println("tady more")
+
         //widgets
         val imageView = view.findViewById<ImageView>(R.id.playlistImageView)
         val imageViewWide = view.findViewById<ImageView>(R.id.playlistImageViewWide)

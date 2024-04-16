@@ -27,6 +27,9 @@
         <action
             android:id="@+id/action_menuFragment_to_inputFragment"
             app:destination="@id/inputFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_downloadHistoryFragment"
+            app:destination="@id/downloadHistoryFragment" />
     </fragment>
     <fragment
         android:id="@+id/animationFragment"
@@ -37,4 +40,9 @@
             android:id="@+id/action_animationFragment_to_menuFragment"
             app:destination="@id/menuFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/downloadHistoryFragment"
+        android:name="com.example.spotifyplaylistdownloader.DownloadHistoryFragment"
+        android:label="fragment_download_history"
+        tools:layout="@layout/fragment_download_history" />
 </navigation>

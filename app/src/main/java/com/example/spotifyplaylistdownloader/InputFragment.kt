@@ -119,7 +119,7 @@ class InputFragment : Fragment() {
                 val bundle = Bundle().apply {
                     putString("link", spotifyLink)
                 }
-            findNavController().navigate(R.id.action_inputFragment_to_playlistFragment, bundle)
+                findNavController().navigate(R.id.action_inputFragment_to_playlistFragment, bundle)
             }
         }
 
