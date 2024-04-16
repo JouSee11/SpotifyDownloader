@@ -84,6 +84,15 @@ class PlaylistFragment : Fragment(), ServiceCallback {
         downloadingBoolean = false
     }
 
+    fun cancelDownloadUI() {
+        downloadingBoolean = false
+
+        //update ui button
+        downloadButton.text = "Download"
+        downloadButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.green))
+        songsAdapter.cancelAllDownload()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -280,12 +289,9 @@ class PlaylistFragment : Fragment(), ServiceCallback {
                     action = DownloadService.Actions.STOP.toString()
                 }
                 ContextCompat.startForegroundService(requireContext(), intent)
-                downloadingBoolean = false
 
-                //update ui button
-                downloadButton.text = "Download"
-                downloadButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.green))
-                songsAdapter.cancelAllDownload()
+                //update ui
+                cancelDownloadUI()
             }
         }
 

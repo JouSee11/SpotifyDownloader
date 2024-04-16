@@ -3,6 +3,7 @@ package com.example.spotifyplaylistdownloader
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -82,18 +83,24 @@ class DownloadService: Service() {
     }
 
     private fun start(playlistNameString: String) {
+        //crete a button to stop the intent
+        val actionIntent = Intent(mContext, MyBroadcastReceiver::class.java)
+        actionIntent.action = "ACTION_BUTTON_CLICKED"
+        val actionPendingIntent = PendingIntent.getBroadcast(mContext, 0, actionIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        //create notification
         notificationBuilder = NotificationCompat.Builder(this, "downloading_channel")
             .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentTitle("Downloading")
+            .setContentTitle("Downloading - $playlistNameString")
             .setContentText("0%")
             .setProgress(100, 0, false)
+            .addAction(R.drawable.button_folder, "stop", actionPendingIntent)
 
         startForeground(notificationId, notificationBuilder.build())
 
 
         //download process
         val myFunDownload: PyObject? = myModule?.get("download")
-
 
         var downloadCount = 1
         val playlistSize = songArtistMap.size
@@ -123,10 +130,6 @@ class DownloadService: Service() {
                     break
                 }
             }
-//            isDownloading = false
-//            downloadButton.text = "Downloaded"
-//            downloadButton.isEnabled = false
-//            downloadButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.light_gray))
             //delete from the list that are already downloaded
             downloaded.forEach { songArtistMap.remove(it) }
             downloaded.clear()
@@ -154,6 +157,7 @@ class DownloadService: Service() {
         downloaded.clear()
 
         notificationManager.cancel(notificationId)
+        stopForeground(true)
         stopSelf()
     }
 
