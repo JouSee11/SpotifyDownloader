@@ -30,6 +30,9 @@
         <action
             android:id="@+id/action_menuFragment_to_downloadHistoryFragment"
             app:destination="@id/downloadHistoryFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_helpFragmnet"
+            app:destination="@id/helpFragmnet" />
     </fragment>
     <fragment
         android:id="@+id/animationFragment"
@@ -45,4 +48,9 @@
         android:name="com.example.spotifyplaylistdownloader.DownloadHistoryFragment"
         android:label="fragment_download_history"
         tools:layout="@layout/fragment_download_history" />
+    <fragment
+        android:id="@+id/helpFragmnet"
+        android:name="com.example.spotifyplaylistdownloader.HelpFragmnet"
+        android:label="fragment_help_fragmnet"
+        tools:layout="@layout/fragment_help_fragmnet" />
 </navigation>

@@ -1,16 +1,10 @@
 package com.example.spotifyplaylistdownloader
 
-import android.content.Context
 import android.os.Bundle
-import android.os.Vibrator
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import androidx.activity.addCallback
-import androidx.navigation.fragment.findNavController
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -19,10 +13,10 @@ private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
- * Use the [MenuFragment.newInstance] factory method to
+ * Use the [HelpFragmnet.newInstance] factory method to
  * create an instance of this fragment.
  */
-class MenuFragment : Fragment() {
+class HelpFragmnet : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -33,7 +27,6 @@ class MenuFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
-
     }
 
     override fun onCreateView(
@@ -41,32 +34,7 @@ class MenuFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_menu, container, false)
-
-        val vibrator = requireContext().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-        //disable to go back to animation fragment
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            if (vibrator.hasVibrator()) {vibrator.vibrate(200)}
-        }
-
-        //widgets
-        val imageViewLogo = view.findViewById<ImageView>(R.id.imageViewLogo)
-        val buttonDownload = view.findViewById<Button>(R.id.buttonDownloadMenu)
-        val buttonDownloadHistory = view.findViewById<Button>(R.id.buttonDownloadHistory)
-        val buttonHelp = view.findViewById<Button>(R.id.buttonHelp)
-
-        buttonDownload.setOnClickListener {
-            findNavController().navigate(R.id.action_menuFragment_to_inputFragment)
-        }
-
-        buttonDownloadHistory.setOnClickListener {
-            findNavController().navigate(R.id.action_menuFragment_to_downloadHistoryFragment)
-        }
-
-        imageViewLogo.setImageDrawable(resources.getDrawable(R.drawable.menu_logo))
-
-
-        return view
+        return inflater.inflate(R.layout.fragment_help_fragmnet, container, false)
     }
 
     companion object {
@@ -76,12 +44,12 @@ class MenuFragment : Fragment() {
          *
          * @param param1 Parameter 1.
          * @param param2 Parameter 2.
-         * @return A new instance of fragment menuFragment.
+         * @return A new instance of fragment HelpFragmnet.
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-            MenuFragment().apply {
+            HelpFragmnet().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
                     putString(ARG_PARAM2, param2)

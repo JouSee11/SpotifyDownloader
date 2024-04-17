@@ -54,6 +54,16 @@
             android:layout_marginVertical="10dp"
             />
 
+        <Button
+            android:id="@+id/buttonHelp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#00FFFFFF"
+            android:text="Help"
+            android:textSize="30dp"
+            android:layout_marginVertical="10dp"
+            />
+
 
 
     </LinearLayout>
