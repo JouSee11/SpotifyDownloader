@@ -79,6 +79,7 @@ dependencies {
 
     //picasso
     implementation("com.squareup.picasso:picasso:2.71828")
+    implementation("jp.wasabeef:picasso-transformations:2.4.0")
 
     implementation("com.github.siyamed:android-shape-imageview:0.9.3@aar")
 

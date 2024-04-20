@@ -2,7 +2,7 @@
 <resources>
     <style name="roundedImageView">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">20dp</item> <!-- Adjust the radius as per your preference -->
+        <item name="cornerSize">15dp</item> <!-- Adjust the radius as per your preference -->
     </style>
 
     <style name="roundedImageViewWide">

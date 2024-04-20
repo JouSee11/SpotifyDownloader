@@ -50,7 +50,7 @@
         tools:layout="@layout/fragment_download_history" />
     <fragment
         android:id="@+id/helpFragmnet"
-        android:name="com.example.spotifyplaylistdownloader.HelpFragmnet"
+        android:name="com.example.spotifyplaylistdownloader.HelpFragment"
         android:label="fragment_help_fragmnet"
         tools:layout="@layout/fragment_help_fragmnet" />
 </navigation>

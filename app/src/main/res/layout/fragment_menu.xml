@@ -16,21 +16,29 @@
         app:titleTextColor="@color/green"
         />
 
+
+
+
+    <ImageView
+        android:id="@+id/imageViewLogo"
+        android:layout_width="400dp"
+        android:layout_height="200dp"
+        android:layout_weight="1"
+        tools:src="@drawable/menu_logo"
+        android:contentDescription="logo_spotify_downloader"
+        android:layout_below="@id/toolbarMenu"/>
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/toolbarMenu"
+        android:layout_height="match_parent"
+        android:layout_below="@id/imageViewLogo"
         android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@color/dark_gray"
+        android:layout_marginVertical="30dp"
+        android:layout_marginHorizontal="30dp"
 
-
-        <ImageView
-            android:id="@+id/imageViewLogo"
-            android:layout_width="300dp"
-            android:layout_height="300dp"
-            android:layout_weight="1"
-            tools:src="@drawable/menu_logo"
-            android:contentDescription="logo_spotify_downloader"/>
+        >
 
         <Button
             android:id="@+id/buttonDownloadMenu"
@@ -62,6 +70,7 @@
             android:text="Help"
             android:textSize="30dp"
             android:layout_marginVertical="10dp"
+            android:textColor="@color/white"
             />
 
 

@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.graphics.Bitmap
+import android.graphics.BlurMaskFilter
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.IBinder
@@ -37,6 +38,7 @@ import kotlinx.coroutines.withContext
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.fragment.findNavController
 import androidx.work.Data
+import jp.wasabeef.picasso.transformations.BlurTransformation
 import java.io.Serializable
 import kotlin.reflect.typeOf
 
@@ -185,7 +187,7 @@ class PlaylistFragment : Fragment(), ServiceCallback {
         myScope.launch {
             //set the image to playlist thumbnail
             val imageUrl = myFunNames.call(playlistLink, "thumbnail").toString()
-            //target to set the image to both normal and wide at once
+//            target to set the image to both normal and wide at once
             val targetImages = object : Target {
                 override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
                     // Set the bitmap to both ImageViews
@@ -204,9 +206,12 @@ class PlaylistFragment : Fragment(), ServiceCallback {
                     // Handle bitmap loading preparation
                 }
             }
+
+            //load images
             Picasso.get()
                 .load(imageUrl)
                 .into(targetImages)
+
         }
 
 
@@ -217,57 +222,6 @@ class PlaylistFragment : Fragment(), ServiceCallback {
         var isDownloading = false
         var downloadJob: Job? = null // Store reference to the download job
         val downloaded = mutableListOf<String>()
-
-//        downloadButton.setOnClickListener {
-//
-//            if (!isDownloading) {
-//                //update the ui button
-//                isDownloading = true
-//                downloadButton.text = "Cancel download"
-//                downloadButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.red))
-//
-//                //start the download
-//                downloadJob = myScope.launch {
-//                    songsAdapter.allStartDownload()
-//                    for ((song, artist) in songArtistMap!!) {
-//                        val resultDownload = withContext(Dispatchers.IO) { myFunDownload?.call(song, artist, downloadDirecotry) }
-//                        downloaded.add(song)
-//                        // make the song appear in the music player
-//                        if (resultDownload.toString() != "") {
-//                            saveToExternalStorage(resultDownload.toString(), song.toString(), artist, playlistNameString, requireContext())
-//
-//                            Toast.makeText(requireContext(),"Downloaded: $song", Toast.LENGTH_SHORT).show()
-//                        }
-//                        songsAdapter.allOneFinished(song)
-//                        println(song::class.simpleName)
-//
-//
-//                        //check if it should be canceled
-//                        if (!isActive) {
-//                            break
-//                        }
-//                    }
-//                    isDownloading = false
-//                    downloadButton.text = "Downloaded"
-//                    downloadButton.isEnabled = false
-//                    downloadButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.light_gray))
-//                    //delete from the list that are already downloaded
-//                    downloaded.forEach { songArtistMap.remove(it) }
-//                    downloaded.clear()
-//                }
-//            } else {
-//                //cancel download
-//                downloadJob?.cancel()
-//                isDownloading = false
-//                downloadButton.text = "Download"
-//                downloadButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.green))
-//                songsAdapter.cancelAllDownload()
-//
-//                //delete from the list that are already downloaded
-//                downloaded.forEach { songArtistMap.remove(it) }
-//                downloaded.clear()
-//            }
-//        }
 
         downloadButton.setOnClickListener {
             if (!downloadingBoolean) {
