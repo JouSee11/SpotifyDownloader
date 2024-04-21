@@ -2,4 +2,9 @@
     <string name="app_name">SpotifyPlaylistDownloader</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- strings for help tab - descriptions -->
+    <string name="help_first">Open Spotify on your device</string>
+    <string name="help_second">Search for the playlist or album you want to download</string>
+    <string name="help_third">Click on the three dots in the top-right corner to open the menu</string>
+    <string name="help_fourth">Click on "share", then "Copy Link". The link is copied to your clipboard, you can paste it in this app</string>
 </resources>

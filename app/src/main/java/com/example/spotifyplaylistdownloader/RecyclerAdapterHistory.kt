@@ -48,7 +48,7 @@ class RecyclerAdapterHistory(private var playlistHistoryList: ArrayList<Playlist
             val clipData = ClipData.newPlainText("text", urlText)
             clipboardManager.setPrimaryClip(clipData)
 
-            Toast.makeText(MainActivity.appContext, "URL copied to clipboard", Toast.LENGTH_SHORT).show()
+            Toast.makeText(MainActivity.appContext, " ${playlist.playlistName} - URL copied to clipboard", Toast.LENGTH_SHORT).show()
         }
 
     }

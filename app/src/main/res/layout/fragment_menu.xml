@@ -34,10 +34,9 @@
         android:layout_below="@id/imageViewLogo"
         android:gravity="center"
         android:orientation="vertical"
-        android:background="@color/dark_gray"
+        android:background="@drawable/menu_container"
         android:layout_marginVertical="30dp"
         android:layout_marginHorizontal="30dp"
-
         >
 
         <Button
@@ -49,6 +48,7 @@
             android:textSize="20dp"
             android:textColor="@color/white"
             android:layout_marginVertical="10dp"
+            app:cornerRadius="20dp"
             />
 
         <Button
@@ -56,10 +56,11 @@
             android:layout_width="250dp"
             android:layout_height="60dp"
             android:text="History"
-            android:backgroundTint="@color/green"
+            android:backgroundTint="@color/light_gray"
             android:textSize="20dp"
             android:textColor="@color/white"
             android:layout_marginVertical="10dp"
+            app:cornerRadius="20dp"
             />
 
         <Button
@@ -69,7 +70,7 @@
             android:background="#00FFFFFF"
             android:text="Help"
             android:textSize="30dp"
-            android:layout_marginVertical="10dp"
+            android:layout_marginVertical="40dp"
             android:textColor="@color/white"
             />
 

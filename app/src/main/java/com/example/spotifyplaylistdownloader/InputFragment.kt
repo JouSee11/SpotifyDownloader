@@ -1,12 +1,14 @@
 package com.example.spotifyplaylistdownloader
 
 import android.Manifest
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.pm.PackageManager
-import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Vibrator
+import android.text.Editable
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -14,17 +16,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.navigation.fragment.findNavController
-import com.chaquo.python.PyObject
-import com.chaquo.python.Python
-import com.chaquo.python.android.AndroidPlatform
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat.getSystemService
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -43,6 +43,7 @@ class InputFragment : Fragment() {
     private var param2: String? = null
 
     private lateinit var permissionLauncher: ActivityResultLauncher<Array<String>>
+    private lateinit var clipboardManager: ClipboardManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,7 +61,8 @@ class InputFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_input, container, false)
 
         //widgets
-        val pasteButton = view.findViewById<Button>(R.id.pasteButton)
+        val continueButton = view.findViewById<ImageButton>(R.id.continueButton)
+        val pasteButton = view.findViewById<Button>(R.id.pasteClipboardButton)
         val editText = view.findViewById<EditText>(R.id.editText)
         val toolbar = view.findViewById<Toolbar>(R.id.toolbarInput)
 
@@ -70,6 +72,7 @@ class InputFragment : Fragment() {
             val granted = permissions.entries.all { it.value }
             if (!granted) {
                 Toast.makeText(context, "Denied permissions - RESTART THE APP - allow permissions", Toast.LENGTH_SHORT).show()
+                continueButton.isEnabled = false
                 pasteButton.isEnabled = false
                 pasteButton.text = "Restart app"
             }
@@ -78,16 +81,25 @@ class InputFragment : Fragment() {
         //get permissions
         updateOrRequestPermissions()
 
+        clipboardManager = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        //paste from clipboard button
+        pasteButton.setOnClickListener {
+            val clipData: ClipData? = clipboardManager.primaryClip
+            //check if it is not empty
+            if (clipData != null && clipData.itemCount > 0) {
+                val item: ClipData.Item = clipData.getItemAt(0)
+                val clipboardText: CharSequence? = item.text
+                editText.setText(clipboardText)
+            }
+            else {
+                Toast.makeText(requireContext(), "No copied data", Toast.LENGTH_SHORT).show()
+            }
 
+        }
 
-        //get reference to python to validate the link
-        //val pyInnit = Python.start(AndroidPlatform(requireContext()))
-//        val py = Python.getInstance()
-//        val myModule: PyObject? = py.getModule("get_spotify_names")
-//        val myFunNames: PyObject? = myModule?.get("get_names")
 
         //button press action
-        pasteButton.setOnClickListener {
+        continueButton.setOnClickListener {
             //check if the user is connected
             val connected = checkInternetConnectivity(requireContext())
             if (!connected) {

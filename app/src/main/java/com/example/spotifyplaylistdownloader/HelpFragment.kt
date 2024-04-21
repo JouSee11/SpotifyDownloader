@@ -1,10 +1,18 @@
 package com.example.spotifyplaylistdownloader
 
 import android.os.Bundle
+import android.provider.MediaStore.Images.ImageColumns
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
+import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import org.w3c.dom.Text
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -21,6 +29,30 @@ class HelpFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    lateinit var imageViewHelp: ImageView
+    lateinit var infoText: TextView
+    lateinit var buttonNext: ImageButton
+    lateinit var buttonPrev: ImageButton
+
+    private val gifResources = intArrayOf(
+        R.drawable.help_1,
+        R.drawable.help_2,
+        R.drawable.help_3,
+        R.drawable.help_4
+    )
+    private val stringResource = intArrayOf(
+        R.string.help_first,
+        R.string.help_second,
+        R.string.help_third,
+        R.string.help_fourth
+    )
+    private var currentPosition = 0
+    private val lengthResources = gifResources.size - 1
+
+
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -34,7 +66,65 @@ class HelpFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_help_fragmnet, container, false)
+        val view =  inflater.inflate(R.layout.fragment_help_fragmnet, container, false)
+
+        buttonNext = view.findViewById<ImageButton>(R.id.arrow_next)
+        buttonPrev = view.findViewById<ImageButton>(R.id.arrow_previous)
+        infoText = view.findViewById<TextView>(R.id.stageInfo)
+        imageViewHelp = view.findViewById<ImageView>(R.id.imageViewHelp)
+
+        initializeState()
+
+        //actions for back and forward buttons
+        buttonNext.setOnClickListener {
+            //check if we are already in the end
+            nextImage()
+        }
+
+        buttonPrev.setOnClickListener {
+            //check if we are already in the end
+            previousImage()
+        }
+
+        return view
+    }
+
+    private fun nextImage() {
+        //check if we are already in the end
+        if (currentPosition < lengthResources) {
+            currentPosition++
+
+            Glide.with(this)
+                .load(gifResources[currentPosition])
+                .into(imageViewHelp)
+
+            infoText.setText(stringResource[currentPosition])
+        } else {
+            //Toast.makeText(requireContext(), "You are at the end", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun previousImage() {
+        //check if we are already in the end
+        if (currentPosition > 0) {
+            currentPosition--
+
+            Glide.with(this)
+                .load(gifResources[currentPosition])
+                .into(imageViewHelp)
+
+            infoText.setText(stringResource[currentPosition])
+        } else {
+            //Toast.makeText(requireContext(), "You are at the start", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun initializeState() {
+        Glide.with(this)
+            .load(gifResources[currentPosition])
+            .into(imageViewHelp)
+
+        infoText.setText(stringResource[currentPosition])
     }
 
     companion object {

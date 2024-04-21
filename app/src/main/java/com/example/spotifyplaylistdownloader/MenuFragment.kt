@@ -63,6 +63,10 @@ class MenuFragment : Fragment() {
             findNavController().navigate(R.id.action_menuFragment_to_downloadHistoryFragment)
         }
 
+        buttonHelp.setOnClickListener {
+            findNavController().navigate(R.id.action_menuFragment_to_helpFragmnet)
+        }
+
         imageViewLogo.setImageDrawable(resources.getDrawable(R.drawable.menu_logo))
 
 
