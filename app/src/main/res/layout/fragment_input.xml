@@ -51,16 +51,19 @@
         android:layout_centerHorizontal="true"
         />
 
-    <ImageButton
+    <Button
         android:id="@+id/continueButton"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:background="@drawable/next_arrow"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
         android:textSize="20sp"
+        android:text="Submit"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/green"
         android:layout_gravity="center"
         android:layout_marginVertical="20dp"
         android:layout_below="@id/pasteClipboardButton"
         android:layout_centerHorizontal="true"
+        android:gravity="center"
 
         />
 

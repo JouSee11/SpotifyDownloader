@@ -90,7 +90,7 @@ class DownloadService: Service() {
 
         //create notification
         notificationBuilder = NotificationCompat.Builder(this, "downloading_channel")
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setSmallIcon(R.drawable.logo_small)
             .setContentTitle("Downloading - $playlistNameString")
             .setContentText("0%")
             .setProgress(100, 0, false)

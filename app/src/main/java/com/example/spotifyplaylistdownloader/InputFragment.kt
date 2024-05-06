@@ -61,7 +61,7 @@ class InputFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_input, container, false)
 
         //widgets
-        val continueButton = view.findViewById<ImageButton>(R.id.continueButton)
+        val continueButton = view.findViewById<Button>(R.id.continueButton)
         val pasteButton = view.findViewById<Button>(R.id.pasteClipboardButton)
         val editText = view.findViewById<EditText>(R.id.editText)
         val toolbar = view.findViewById<Toolbar>(R.id.toolbarInput)
